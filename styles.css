@@ -1047,32 +1047,7 @@ strong{ font-weight: 650; }
 }
 
 
-/* Typing animation for bash commands */
-.bash-cmd {
-  opacity: 0;
-}
 
-.bash-cmd.typing {
-  opacity: 1;
-  animation: typing 800ms steps(20, end);
-}
-
-@keyframes typing {
-  from { width: 0; }
-  to { width: 100%; }
-}
-
-.bash-output {
-  opacity: 0;
-  transition: opacity 300ms ease;
-}
-
-.bash-output.show {
-  opacity: 1;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .bash-cmd, .bash-output { opacity: 1; animation: none !important; transition: none !important; }
 }/* PROJECTS SECTION - Blue Team Arsenal */
 .projects-grid {
   display: grid;
