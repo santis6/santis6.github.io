@@ -162,18 +162,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // Start typing after a short delay using Intersection Observer so it starts when in view
-  const consoleObserver = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        setTimeout(typeTerminal, 500);
-        consoleObserver.unobserve(entry.target);
-      }
-    });
-  }, { threshold: 0.1 });
-  
-  const consoleEl = document.querySelector('.bash-console');
-  if (consoleEl) {
-    consoleObserver.observe(consoleEl);
-  }
+  // Start typing immediately after a short delay
+  // (Removed IntersectionObserver to ensure it always runs on mobile)
+  setTimeout(typeTerminal, 600);
 });
