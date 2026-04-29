@@ -1,1151 +1,584 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Santiago Daniel Sandili — SOC Analyst</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
-<style>
-  :root {
-    --bg: #0B0D12;
-    --bg2: rgba(255,255,255,0.03);
-    --bg3: rgba(255,255,255,0.06);
-    --border: rgba(255,255,255,0.08);
-    --border2: rgba(255,255,255,0.15);
-    --accent: #38BDF8;
-    --accent2: #0EA5E9;
-    --accent-dim: rgba(56,189,248,0.10);
-    --accent-dim2: rgba(56,189,248,0.25);
-    --text: #F1F5F9;
-    --text2: #94A3B8;
-    --text3: #64748B;
-    --warning: #F59E0B;
-    --danger: #EF4444;
-    --success: #10B981;
-    --mono: 'JetBrains Mono', monospace;
-    --sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-  }
-
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  html { scroll-behavior: smooth; }
-
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: var(--sans);
-    font-size: 16px;
-    line-height: 1.7;
-    min-height: 100vh;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-  }
-
-  /* GRADIENT MESH BACKGROUND */
-  .gradient-mesh {
-    position: fixed;
-    inset: 0;
-    pointer-events: none;
-    z-index: 0;
-    overflow: hidden;
-  }
-  .gradient-mesh::before,
-  .gradient-mesh::after {
-    content: '';
-    position: absolute;
-    border-radius: 50%;
-    filter: blur(120px);
-    opacity: 0.15;
-    animation: float 20s ease-in-out infinite;
-  }
-  .gradient-mesh::before {
-    width: 600px; height: 600px;
-    background: var(--accent);
-    top: -10%; left: -10%;
-    animation-delay: 0s;
-  }
-  .gradient-mesh::after {
-    width: 500px; height: 500px;
-    background: #8B5CF6;
-    bottom: -10%; right: -5%;
-    animation-delay: -10s;
-  }
-  @keyframes float {
-    0%, 100% { transform: translate(0, 0) scale(1); }
-    33% { transform: translate(30px, -30px) scale(1.1); }
-    66% { transform: translate(-20px, 20px) scale(0.9); }
-  }
-
-  /* GLASS NAV */
-  nav {
-    position: fixed;
-    top: 0; left: 0; right: 0;
-    z-index: 100;
-    background: rgba(11,13,18,0.6);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border-bottom: 1px solid var(--border);
-    padding: 0 2.5rem;
-    height: 64px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-  .nav-logo {
-    font-family: var(--mono);
-    font-size: 13px;
-    color: var(--accent);
-    letter-spacing: 0.05em;
-  }
-  .nav-logo span { color: var(--text3); }
-
-  .nav-right { display: flex; align-items: center; gap: 1.5rem; }
-  .nav-links { display: flex; gap: 2rem; list-style: none; }
-  .nav-links a {
-    font-family: var(--sans);
-    font-size: 14px;
-    font-weight: 500;
-    color: var(--text2);
-    text-decoration: none;
-    transition: color 0.25s;
-    position: relative;
-  }
-  .nav-links a:hover { color: var(--accent); }
-  .nav-links a::after {
-    content: '';
-    position: absolute;
-    bottom: -4px; left: 0;
-    width: 0; height: 2px;
-    background: var(--accent);
-    transition: width 0.3s;
-  }
-  .nav-links a:hover::after { width: 100%; }
-
-  .menu-toggle {
-    display: none;
-    background: none;
-    border: none;
-    color: var(--text2);
-    font-size: 20px;
-    cursor: pointer;
-  }
-
-  .mobile-nav {
-    display: none;
-    position: fixed;
-    top: 64px; left: 0; right: 0;
-    background: rgba(11,13,18,0.9);
-    backdrop-filter: blur(20px);
-    border-bottom: 1px solid var(--border);
-    z-index: 99;
-    padding: 1rem 2rem;
-  }
-  .mobile-nav a {
-    display: block;
-    padding: 0.75rem 0;
-    color: var(--text2);
-    text-decoration: none;
-    font-size: 14px;
-    font-weight: 500;
-    border-bottom: 1px solid var(--border);
-  }
-  .mobile-nav a:last-child { border-bottom: none; }
-  .mobile-nav a:hover { color: var(--accent); }
-
-  .status-bar {
-    position: fixed;
-    bottom: 0; left: 0; right: 0;
-    z-index: 100;
-    background: rgba(11,13,18,0.6);
-    backdrop-filter: blur(20px);
-    border-top: 1px solid var(--border);
-    height: 36px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 2rem;
-    font-family: var(--sans);
-    font-size: 12px;
-    color: var(--text3);
-  }
-
-  main { padding-top: 64px; padding-bottom: 36px; position: relative; z-index: 1; }
-
-  .hero {
-    min-height: calc(100vh - 64px - 36px);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 5rem 4rem;
-    position: relative;
-    overflow: hidden;
-  }
-  .hero-grid {
-    position: absolute;
-    inset: 0;
-    background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px);
-    background-size: 80px 80px;
-    opacity: 0.3;
-    mask-image: radial-gradient(ellipse 70% 70% at 50% 50%, black, transparent);
-  }
-  .hero-inner {
-    position: relative;
-    z-index: 1;
-    max-width: 1100px;
-    width: 100%;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 4rem;
-    align-items: center;
-  }
-  .hero-tag {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    font-family: var(--sans);
-    font-size: 12px;
-    font-weight: 500;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--accent);
-    border: 1px solid var(--accent-dim2);
-    background: var(--accent-dim);
-    padding: 6px 16px;
-    border-radius: 100px;
-    margin-bottom: 2rem;
-  }
-  .hero-title {
-    font-family: var(--sans);
-    font-size: clamp(3.2rem, 5.5vw, 5.5rem);
-    font-weight: 700;
-    line-height: 1.05;
-    color: var(--text);
-    margin-bottom: 0.5rem;
-    letter-spacing: -0.02em;
-  }
-  .hero-title .accent {
-    color: var(--accent);
-    background: linear-gradient(135deg, var(--accent), #8B5CF6);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-  .hero-subtitle {
-    font-family: var(--sans);
-    font-size: clamp(1.4rem, 2.2vw, 2rem);
-    font-weight: 300;
-    color: var(--text2);
-    margin-bottom: 2rem;
-    line-height: 1.4;
-  }
-  .hero-bio {
-    font-family: var(--sans);
-    font-size: 16px;
-    color: var(--text2);
-    line-height: 1.8;
-    max-width: 480px;
-    margin-bottom: 2.5rem;
-  }
-  .hero-bio .hl { color: var(--accent); font-weight: 500; }
-  .hero-actions { display: flex; gap: 1rem; flex-wrap: wrap; }
-
-  .btn-primary {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    background: linear-gradient(135deg, var(--accent), var(--accent2));
-    color: #fff;
-    font-family: var(--sans);
-    font-size: 14px;
-    font-weight: 600;
-    padding: 12px 24px;
-    border: none;
-    border-radius: 10px;
-    cursor: pointer;
-    text-decoration: none;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 20px rgba(56,189,248,0.25);
-  }
-  .btn-primary:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 30px rgba(56,189,248,0.4);
-  }
-  .btn-outline {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    background: var(--bg2);
-    backdrop-filter: blur(10px);
-    color: var(--text);
-    font-family: var(--sans);
-    font-size: 14px;
-    font-weight: 500;
-    padding: 12px 24px;
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    cursor: pointer;
-    text-decoration: none;
-    transition: all 0.3s ease;
-  }
-  .btn-outline:hover {
-    border-color: var(--accent-dim2);
-    background: var(--accent-dim);
-    color: var(--accent);
-    transform: translateY(-2px);
-  }
-
-  .terminal {
-    background: var(--bg2);
-    backdrop-filter: blur(20px);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    overflow: hidden;
-    width: 100%;
-    max-width: 440px;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.3);
-  }
-  .terminal-bar {
-    background: rgba(255,255,255,0.04);
-    border-bottom: 1px solid var(--border);
-    padding: 12px 16px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-  .tb-dot { width: 10px; height: 10px; border-radius: 50%; }
-  .tb-red { background: #FF5F57; }
-  .tb-amber { background: #FFBD2E; }
-  .tb-green { background: #28CA41; }
-  .terminal-title {
-    font-family: var(--mono);
-    font-size: 11px;
-    color: var(--text3);
-    margin-left: auto;
-  }
-  .terminal-body {
-    padding: 1.25rem 1.5rem;
-    font-family: var(--mono);
-    font-size: 13px;
-    line-height: 2;
-  }
-  .t-prompt { color: var(--accent2); }
-  .t-cmd { color: var(--text); }
-  .t-out { color: var(--text2); padding-left: 1rem; }
-  .t-key { color: #C084FC; }
-  .t-val { color: var(--accent); }
-  .t-warn { color: var(--warning); }
-  .t-err { color: var(--danger); }
-  .cursor {
-    display: inline-block;
-    width: 8px; height: 15px;
-    background: var(--accent);
-    vertical-align: middle;
-    animation: blink 1s step-end infinite;
-  }
-  @keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: 0; } }
-
-  section {
-    padding: 6rem 5rem;
-    position: relative;
-    z-index: 1;
-  }
-  .section-header {
-    display: flex;
-    align-items: baseline;
-    gap: 1.25rem;
-    margin-bottom: 3.5rem;
-  }
-  .section-num {
-    font-family: var(--mono);
-    font-size: 13px;
-    color: var(--accent);
-  }
-  .section-title {
-    font-family: var(--sans);
-    font-size: 2.25rem;
-    font-weight: 600;
-    color: var(--text);
-    letter-spacing: -0.01em;
-  }
-  .section-line {
-    flex: 1;
-    height: 1px;
-    background: linear-gradient(90deg, var(--border), transparent);
-  }
-
-  .skills-list {
-    display: flex;
-    flex-direction: column;
-    gap: 0;
-    border-radius: 16px;
-    overflow: hidden;
-  }
-  .skill-row {
-    display: grid;
-    grid-template-columns: 280px 1fr;
-    gap: 2rem;
-    align-items: start;
-    padding: 1.5rem 2rem;
-    background: var(--bg2);
-    backdrop-filter: blur(10px);
-    border: 1px solid var(--border);
-    border-bottom: none;
-    transition: all 0.3s ease;
-  }
-  .skill-row:last-child { border-bottom: 1px solid var(--border); border-radius: 0 0 16px 16px; }
-  .skill-row:first-child { border-radius: 16px 16px 0 0; }
-  .skill-row:hover {
-    background: var(--bg3);
-    border-color: var(--border2);
-  }
-  .skill-row-name {
-    font-family: var(--sans);
-    font-size: 1.05rem;
-    font-weight: 600;
-    color: var(--text);
-  }
-  .skill-row-desc {
-    font-family: var(--sans);
-    font-size: 15px;
-    color: var(--text2);
-    line-height: 1.65;
-  }
-
-  .tools-cloud {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    justify-content: center;
-  }
-  .tool-tag {
-    font-family: var(--sans);
-    font-size: 14px;
-    font-weight: 500;
-    color: var(--text2);
-    background: var(--bg2);
-    backdrop-filter: blur(10px);
-    border: 1px solid var(--border);
-    padding: 8px 16px;
-    border-radius: 10px;
-    transition: all 0.25s ease;
-  }
-  .tool-tag:hover {
-    border-color: var(--accent-dim2);
-    color: var(--accent);
-    background: var(--accent-dim);
-    transform: translateY(-2px);
-  }
-
-  .labs-list {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-    gap: 1.25rem;
-  }
-  .lab-card {
-    background: var(--bg2);
-    backdrop-filter: blur(10px);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 1.75rem;
-    display: flex;
-    flex-direction: column;
-    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-    text-decoration: none;
-    color: inherit;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
-  }
-  .lab-card:hover {
-    border-color: var(--border2);
-    transform: translateY(-6px);
-    box-shadow: 0 20px 50px rgba(0,0,0,0.25);
-  }
-  .lab-card.placeholder {
-    opacity: 0.5;
-    cursor: default;
-  }
-  .lab-card.placeholder:hover {
-    transform: none;
-    border-color: var(--border);
-    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
-  }
-  .lab-cat {
-    font-family: var(--sans);
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--accent);
-    margin-bottom: 0.75rem;
-  }
-  .lab-title {
-    font-family: var(--sans);
-    font-size: 1.15rem;
-    font-weight: 600;
-    color: var(--text);
-    margin-bottom: 0.75rem;
-    letter-spacing: -0.01em;
-  }
-  .lab-desc {
-    font-family: var(--sans);
-    font-size: 14px;
-    color: var(--text2);
-    line-height: 1.65;
-    flex: 1;
-    margin-bottom: 1.25rem;
-  }
-  .lab-arrow {
-    font-size: 14px;
-    color: var(--text3);
-    transition: all 0.2s;
-  }
-  .lab-card:hover .lab-arrow { color: var(--accent); }
-
-  .labs-more {
-    margin-top: 2.5rem;
-    text-align: center;
-  }
-
-  .certs-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 1.25rem;
-  }
-  .cert-card {
-    background: var(--bg2);
-    backdrop-filter: blur(10px);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 1.75rem;
-    position: relative;
-    overflow: hidden;
-    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-    display: flex;
-    flex-direction: column;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
-  }
-  .cert-card::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 2px;
-    background: var(--accent);
-  }
-  .cert-card.pending::before { background: var(--text3); }
-  .cert-card:hover {
-    border-color: var(--border2);
-    transform: translateY(-4px);
-    box-shadow: 0 20px 50px rgba(0,0,0,0.25);
-  }
-  .cert-card.featured {
-    border: 1px solid var(--border);
-    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
-  }
-  .cert-card.featured::before {
-    height: 2px;
-    background: var(--accent);
-  }
-  .cert-ribbon {
-    position: absolute;
-    top: 14px;
-    right: -28px;
-    transform: rotate(45deg);
-    background: linear-gradient(135deg, var(--accent), var(--accent2));
-    color: #fff;
-    font-family: var(--sans);
-    font-size: 9px;
-    font-weight: 700;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    padding: 4px 30px;
-    box-shadow: 0 2px 8px rgba(56,189,248,0.3);
-    pointer-events: none;
-    z-index: 2;
-  }
-  .cert-org {
-    font-family: var(--sans);
-    font-size: 11px;
-    font-weight: 500;
-    color: var(--text3);
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    margin-bottom: 6px;
-  }
-  .cert-name {
-    font-family: var(--sans);
-    font-size: 1.15rem;
-    font-weight: 600;
-    color: var(--text);
-    line-height: 1.35;
-    margin-bottom: 1.25rem;
-    flex: 1;
-  }
-  .cert-link {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    font-family: var(--sans);
-    font-size: 14px;
-    font-weight: 500;
-    color: var(--text);
-    text-decoration: none;
-    position: relative;
-    transition: all 0.25s;
-  }
-  .cert-link::after {
-    content: '';
-    position: absolute;
-    bottom: -2px;
-    left: 0;
-    width: 0;
-    height: 1px;
-    background: var(--accent);
-    transition: width 0.3s;
-  }
-  .cert-link:hover {
-    color: var(--text);
-  }
-  .cert-link:hover::after {
-    width: 100%;
-  }
-  .cert-status {
-    display: inline-block;
-    font-family: var(--sans);
-    font-size: 12px;
-    font-weight: 500;
-    padding: 4px 12px;
-    border-radius: 6px;
-  }
-  .cert-status.active { background: var(--accent-dim); color: var(--accent); }
-  .cert-status.pending { background: rgba(255,255,255,0.05); color: var(--text3); }
-
-  .courses-list {
-    display: flex;
-    flex-direction: column;
-    gap: 0;
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    overflow: hidden;
-    margin-top: 2rem;
-    background: var(--bg2);
-    backdrop-filter: blur(10px);
-  }
-  .course-item {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 1.1rem 1.5rem;
-    border-bottom: 1px solid var(--border);
-    transition: all 0.2s;
-  }
-  .course-item:last-child { border-bottom: none; }
-  .course-item:hover { background: var(--bg3); }
-  .course-name { font-family: var(--sans); font-size: 15px; font-weight: 500; color: var(--text); }
-  .course-org { font-family: var(--sans); font-size: 13px; color: var(--text3); margin-top: 2px; }
-  .course-status { font-size: 16px; color: var(--success); }
-
-  .about-text {
-    font-family: var(--sans);
-    font-size: 17px;
-    color: var(--text2);
-    line-height: 1.85;
-    max-width: 720px;
-  }
-  .about-text p { margin-bottom: 1.25rem; }
-  .about-text p:last-child { margin-bottom: 0; }
-
-  .contact-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 3rem;
-    align-items: start;
-  }
-  .contact-links {
-    display: flex;
-    flex-direction: column;
-    gap: 0;
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    overflow: hidden;
-    background: var(--bg2);
-    backdrop-filter: blur(10px);
-  }
-  .contact-link {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 1.1rem 1.5rem;
-    border-bottom: 1px solid var(--border);
-    text-decoration: none;
-    color: var(--text);
-    transition: all 0.2s ease;
-  }
-  .contact-link:last-child { border-bottom: none; }
-  .contact-link:hover { background: var(--bg3); color: var(--accent); }
-  .cl-left { display: flex; align-items: center; gap: 14px; }
-  .cl-platform { font-size: 12px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text3); width: 80px; }
-  .cl-handle { font-size: 15px; font-weight: 400; }
-  .cl-arrow { font-size: 13px; color: var(--text3); transition: all 0.2s; }
-  .contact-link:hover .cl-arrow { color: var(--accent); }
-
-  .contact-cta {
-    background: var(--bg2);
-    backdrop-filter: blur(10px);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 2.25rem;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
-  }
-  .cta-label {
-    font-family: var(--mono);
-    font-size: 12px;
-    color: var(--accent2);
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    margin-bottom: 0.75rem;
-  }
-  .cta-title {
-    font-family: var(--sans);
-    font-size: 1.6rem;
-    font-weight: 600;
-    color: var(--text);
-    line-height: 1.25;
-    margin-bottom: 1rem;
-  }
-  .cta-body {
-    font-family: var(--sans);
-    font-size: 15px;
-    color: var(--text2);
-    line-height: 1.75;
-    margin-bottom: 1.75rem;
-  }
-
-  @media (max-width: 900px) {
-    .hero-inner { grid-template-columns: 1fr; gap: 2.5rem; }
-    .terminal { max-width: 100%; }
-  }
-
-  @media (max-width: 768px) {
-    .hero { padding: 3rem 1.5rem; }
-    section { padding: 4rem 1.5rem; }
-    nav { padding: 0 1.25rem; }
-    .nav-links { display: none; }
-    .menu-toggle { display: block; }
-    .contact-grid { grid-template-columns: 1fr; }
-    .labs-list { grid-template-columns: 1fr; }
-    .skill-row { grid-template-columns: 1fr; gap: 0.5rem; padding: 1.25rem; }
-    .tools-grid { grid-template-columns: 1fr; }
-    .certs-grid { grid-template-columns: 1fr; }
-  }
-
-  .reveal {
-    opacity: 0;
-    transform: translateY(40px);
-    transition: all 1s cubic-bezier(0.16, 1, 0.3, 1);
-  }
-  .reveal.active {
-    opacity: 1;
-    transform: translateY(0);
-  }
-
-  .scroll-progress {
-    position: fixed;
-    top: 64px;
-    left: 0;
-    height: 2px;
-    background: linear-gradient(90deg, var(--accent), #8B5CF6);
-    z-index: 999;
-    width: 0%;
-    transition: width 0.15s ease;
-  }
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Santiago Daniel Sandili — SOC Analyst · Blue Team</title>
+  <meta name="description" content="Portfolio de Santiago Daniel Sandili — SOC Analyst Jr. · Blue Team · DFIR · Malware Analysis">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;650;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
 
-<div class="gradient-mesh"></div>
+<!-- Scroll Progress -->
+<div class="scroll-progress" id="scrollProgress"></div>
 
-<nav>
-  <div class="nav-logo">
-    <span>~/</span>sandili<span>@soc</span><span style="color:var(--accent)">:~$</span>
+<!-- Gradient mesh background -->
+<div class="gradient-mesh" aria-hidden="true"></div>
+
+<!-- Skip link -->
+<a href="#main" class="skip-link">Saltar al contenido</a>
+
+<!-- Topbar -->
+<header class="topbar" role="banner">
+  <div class="topbar__inner">
+    <div class="brand">
+      <span class="brand__mark mono">&gt;_</span>
+      <span class="brand__name">sandili.dev</span>
+    </div>
+    <nav class="nav" role="navigation" aria-label="Navegación principal">
+      <button class="nav__toggle" aria-expanded="false" aria-controls="navMenu" aria-label="Abrir menú">
+        <span class="nav__toggleIcon" aria-hidden="true"></span>
+        Menu
+      </button>
+      <ul class="nav__menu" id="navMenu" role="list">
+        <li><a href="#sobre-mi">Sobre mí</a></li>
+        <li><a href="#skills">Skills</a></li>
+        <li><a href="#casos">Casos</a></li>
+        <li><a href="#proyectos">Proyectos</a></li>
+        <li><a href="#contacto">Contacto</a></li>
+      </ul>
+    </nav>
   </div>
-  <div class="nav-right">
-    <ul class="nav-links">
-      <li><a href="#about">Sobre mí</a></li>
-      <li><a href="#skills">Skills</a></li>
-      <li><a href="#tools">Herramientas</a></li>
-      <li><a href="#labs">Laboratorios</a></li>
-      <li><a href="#certs">Certificaciones</a></li>
-      <li><a href="#contact">Contacto</a></li>
-    </ul>
-    <button class="menu-toggle" id="menuToggle" aria-label="Menu">☰</button>
-  </div>
-</nav>
+</header>
 
-<div class="mobile-nav" id="mobileNav">
-  <a href="#about">Sobre mí</a>
-  <a href="#skills">Skills</a>
-  <a href="#tools">Herramientas</a>
-  <a href="#labs">Laboratorios</a>
-  <a href="#certs">Certificaciones</a>
-  <a href="#contact">Contacto</a>
-</div>
+<main id="main">
 
-<div class="status-bar">
-  <span class="status-item">Focus: Blue Team / SOC</span>
-  <span class="status-item">Hecho en el interior.</span>
-</div>
+  <!-- HERO -->
+  <section class="hero section">
+    <div class="container">
+      <div class="hero__grid">
+        <div class="hero__content">
+          <p class="eyebrow">
+            <span class="statusDot" aria-hidden="true"></span>
+            <span class="statusPill">Open to work · Tucumán, AR</span>
+          </p>
+          <h1 class="hero__title">Santiago<br>Daniel Sandili</h1>
+          <p class="eyebrow" style="margin-top:10px;">SOC Analyst Jr. · Blue Team · DFIR · Malware Analysis</p>
 
-<main>
-
-  <section id="home" class="hero" style="border-top:none;">
-    <div class="hero-grid"></div>
-    <div class="hero-inner">
-      <div class="hero-left">
-        <span class="hero-tag">SOC Analyst · Blue Team · Threat Detection</span>
-        <div class="hero-title">Santiago<br><span class="accent">Daniel Sandili</span></div>
-        <div class="hero-subtitle">Practicante de Operaciones de Seguridad</div>
-
-        <p class="hero-bio">
-          Apasionado por la <span class="hl">defensa proactiva</span> y el analisis de amenazas.
-          Desarrollo mis skills a traves de <span class="hl">labs practicos</span> y writeups tecnicos documentados.
-        </p>
-        <div class="hero-actions">
-          <a href="#labs" class="btn-primary">Ver mis writeups ↓</a>
-          <a href="#contact" class="btn-outline">Contacto</a>
-          <a href="#" class="btn-outline">Descargar CV</a>
-        </div>
-      </div>
-
-      <div class="hero-right">
-        <div class="terminal">
-          <div class="terminal-bar">
-            <div class="tb-dot tb-red"></div>
-            <div class="tb-dot tb-amber"></div>
-            <div class="tb-dot tb-green"></div>
-            <span class="terminal-title">whoami.sh</span>
+          <div class="hero__profile" id="sobre-mi">
+            <p>Oriundo del interior del país, apasionado por la ciberseguridad y por aprender algo nuevo cada día, con el objetivo de mejorar como profesional y como persona.</p>
+            <p>Desde mis inicios en la ciberseguridad siempre me interesó cómo se defienden las infraestructuras más importantes: cómo se revisa el dump de una memoria para encontrar datos relevantes, cómo funciona la forensia digital, y cómo se atrapa a un ciberdelincuente antes de que cumpla su objetivo. Todo esto inclinó la balanza hacia el Blue Team.</p>
+            <p>Por eso diseñé un roadmap de aprendizaje intensivo y detallado para adquirir los conocimientos necesarios. Hoy, ese camino me trajo hasta aquí: construyendo un portfolio web para mostrar mi avance, mis conocimientos y mis objetivos.</p>
           </div>
-          <div class="terminal-body" id="terminalBody">
-            <div><span class="t-prompt">$</span> <span class="t-cmd">cat about.json</span></div>
-            <div class="t-out">{</div>
-            <div class="t-out">&nbsp;&nbsp;<span class="t-key">"role"</span>: <span class="t-val">"SOC Analyst / Practitioner"</span>,</div>
-            <div class="t-out">&nbsp;&nbsp;<span class="t-key">"focus"</span>: <span class="t-val">"Blue Team, Forensics, SOC"</span>,</div>
-            <div class="t-out">&nbsp;&nbsp;<span class="t-key">"email"</span>: <span class="t-val">"sdsandili06@gmail.com"</span>,</div>
-            <div class="t-out">&nbsp;&nbsp;<span class="t-key">"writeups"</span>: <span class="t-val">"github.com/santis6"</span>,</div>
-            <div class="t-out">&nbsp;&nbsp;<span class="t-key">"status"</span>: <span class="t-warn">"buscando_oportunidades"</span></div>
-            <div class="t-out">}</div>
-            <div style="margin-top:4px;"><span class="t-prompt">$</span> <span class="cursor"></span></div>
+
+          <!-- Cert Badges -->
+          <div class="hero__certs">
+            <span class="certBadge certBadge--active">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+              TryHackMe SOC L1
+            </span>
+            <span class="certBadge certBadge--active">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+              SOC Practitioner
+            </span>
+            <span class="certBadge certBadge--pending">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              Security+ · Próximo
+            </span>
+          </div>
+
+          <div class="hero__cta">
+            <a href="https://github.com/dsandili06" target="_blank" rel="noopener" class="btn btn--primary btn--primaryXL">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+              GitHub
+            </a>
+            <a href="https://www.linkedin.com/in/santiago-sandili" target="_blank" rel="noopener" class="btn btn--secondary btn--secondaryXL">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+              LinkedIn
+            </a>
+          </div>
+          <p class="hero__metaLine mono">// tucuman, argentina · open_to_work: true</p>
+        </div>
+
+        <!-- Hero Panel -->
+        <aside class="hero__panel" aria-label="Perfil resumido">
+          <div class="card card--evidence">
+            <div class="card__header">
+              <div>
+                <p class="card__kicker mono">ANALYST PROFILE</p>
+                <h2 class="card__title" style="font-size:16px;">incident_room.sh</h2>
+              </div>
+              <span class="badge badge--ok">ACTIVE</span>
+            </div>
+            <!-- Terminal -->
+            <div class="bash-console" style="margin: 0 18px 16px;">
+              <div class="bash-console__header">
+                <div class="bash-console__dots">
+                  <div class="bash-console__dot"></div>
+                  <div class="bash-console__dot"></div>
+                  <div class="bash-console__dot"></div>
+                </div>
+                <span class="bash-console__title">whoami.sh</span>
+              </div>
+              <div class="bash-console__body">
+                <div class="bash-line">
+                  <span class="bash-prompt">$</span>
+                  <span class="bash-cmd typing-text">cat about.json</span>
+                </div>
+                <div class="bash-output">
+                  <div>"role": "SOC Analyst / Practitioner",</div>
+                  <div>"focus": "Threat Detection &amp; IR",</div>
+                  <div>"labs": "TryHackMe · SOC Path",</div>
+                  <div>"status": "open_to_work"</div>
+                </div>
+                <div class="bash-line">
+                  <span class="bash-prompt">$</span>
+                  <span class="bash-cmd typing-text">whoami</span>
+                </div>
+                <div class="bash-output">dsandili06 · blue_team</div>
+                <div class="bash-line">
+                  <span class="bash-prompt">$</span>
+                  <span class="bash-cursor" aria-hidden="true"></span>
+                </div>
+              </div>
+            </div>
+            <div class="evidence" style="padding-top:0;">
+              <div class="evidence__row">
+                <span class="evidence__key mono">Plataforma</span>
+                <span class="evidence__val">TryHackMe · CyberDefenders</span>
+              </div>
+              <div class="evidence__row">
+                <span class="evidence__key mono">Herramientas</span>
+                <span class="evidence__val">Splunk · Wireshark · Volatility</span>
+              </div>
+              <div class="evidence__row">
+                <span class="evidence__key mono">Scripting</span>
+                <span class="evidence__val">Python · PowerShell · Bash</span>
+              </div>
+            </div>
+            <div class="panelFooter">
+              <div class="panelStat">
+                <span class="panelStat__label">Labs</span>
+                <span class="panelStat__value mono">SOC L1 ✓</span>
+              </div>
+              <div class="panelStat">
+                <span class="panelStat__label">Stack</span>
+                <span class="panelStat__value mono">Blue Team</span>
+              </div>
+              <div class="panelStat">
+                <span class="panelStat__label">Status</span>
+                <span class="panelStat__value mono" style="color:var(--accent)">Open</span>
+              </div>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <!-- SKILLS -->
+  <section class="section reveal" id="skills">
+    <div class="container">
+      <div class="section__header">
+        <p class="section__kicker mono">01. capabilities</p>
+        <h2 class="section__title">Skills &amp; Herramientas</h2>
+        <p class="section__subtitle">Áreas de conocimiento construidas a través de labs prácticos, CTFs y análisis de incidentes reales documentados.</p>
+      </div>
+      <div class="capGrid">
+        <div class="cap card reveal">
+          <div class="cap__icon">
+            <svg viewBox="0 0 24 24"><path d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18m0 0h10a2 2 0 002-2V9M9 21H5a2 2 0 01-2-2V9m0 0h18"/></svg>
+          </div>
+          <h3 class="cap__title">SIEM &amp; Log Analysis</h3>
+          <p class="muted" style="font-size:13px;margin-top:8px;">Splunk SPL, correlación de eventos, reglas de detección</p>
+        </div>
+        <div class="cap card reveal">
+          <div class="cap__icon">
+            <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </div>
+          <h3 class="cap__title">Threat Detection</h3>
+          <p class="muted" style="font-size:13px;margin-top:8px;">IOCs, MITRE ATT&amp;CK, Threat Hunting</p>
+        </div>
+        <div class="cap card reveal">
+          <div class="cap__icon">
+            <svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg>
+          </div>
+          <h3 class="cap__title">Network Security</h3>
+          <p class="muted" style="font-size:13px;margin-top:8px;">Wireshark, pcap analysis, detección de anomalías</p>
+        </div>
+        <div class="cap card reveal">
+          <div class="cap__icon">
+            <svg viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+          </div>
+          <h3 class="cap__title">Incident Response</h3>
+          <p class="muted" style="font-size:13px;margin-top:8px;">Triage, contención, análisis forense, documentación</p>
+        </div>
+        <div class="cap card reveal">
+          <div class="cap__icon">
+            <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          </div>
+          <h3 class="cap__title">OSINT &amp; Threat Intel</h3>
+          <p class="muted" style="font-size:13px;margin-top:8px;">Enriquecimiento de IOCs, CTI, OSINT sobre actores</p>
+        </div>
+        <div class="cap card reveal">
+          <div class="cap__icon">
+            <svg viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+          </div>
+          <h3 class="cap__title">Scripting &amp; Automation</h3>
+          <p class="muted" style="font-size:13px;margin-top:8px;">Python, PowerShell, Bash — automatización SOC</p>
+        </div>
+        <div class="cap card reveal">
+          <div class="cap__icon">
+            <svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+          </div>
+          <h3 class="cap__title">Digital Forensics</h3>
+          <p class="muted" style="font-size:13px;margin-top:8px;">Volatility, Windows Registry, EventIDs, SRUDB</p>
+        </div>
+        <div class="cap card reveal">
+          <div class="cap__icon">
+            <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.94-.49-7-3.85-7-7.93s3.05-7.44 7-7.93v15.86zm2-15.86c1.03.13 2 .45 2.87.93H13v-.93zM13 7h5.24c.25.31.48.65.68 1H13V7zm0 3h6.74c.08.33.15.66.19 1H13v-1zm0 9.93V19h2.87c-.87.48-1.84.8-2.87.93zM18.24 17H13v-1h5.92c-.2.35-.43.69-.68 1zm1.5-3H13v-1h6.93c-.04.34-.11.67-.19 1z"/></svg>
+          </div>
+          <h3 class="cap__title">Malware Analysis</h3>
+          <p class="muted" style="font-size:13px;margin-top:8px;">Análisis estático/dinámico, IOCs, evasión de AV</p>
+        </div>
+      </div>
+
+      <!-- Tech Stack -->
+      <div style="margin-top:40px;">
+        <p class="section__kicker mono" style="margin-bottom:16px;">tech stack</p>
+        <div class="stackGrid">
+          <span class="stackItem">Splunk</span>
+          <span class="stackItem">Wireshark</span>
+          <span class="stackItem">Volatility</span>
+          <span class="stackItem">Python</span>
+          <span class="stackItem">PowerShell</span>
+          <span class="stackItem">Bash</span>
+          <span class="stackItem">MITRE ATT&CK</span>
+          <span class="stackItem">VirusTotal</span>
+          <span class="stackItem">AbuseIPDB</span>
+          <span class="stackItem">Autopsy</span>
+          <span class="stackItem">TryHackMe</span>
+          <span class="stackItem">CyberDefenders</span>
+          <span class="stackItem">LetsDefend</span>
+          <span class="stackItem">VS Code</span>
+          <span class="stackItem">Git</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CASES / WRITEUPS -->
+  <section class="section" id="casos">
+    <div class="container">
+      <div class="section__header reveal">
+        <p class="section__kicker mono">02. case files</p>
+        <h2 class="section__title">Labs &amp; Writeups</h2>
+        <p class="section__subtitle">Análisis documentados de incidentes reales y CTFs. Cada caso incluye vector inicial, técnicas detectadas y mapeo MITRE ATT&CK.</p>
+      </div>
+      <div class="cases">
+
+        <!-- Case 1 -->
+        <article class="case card reveal">
+          <div class="caseFile">
+            <div class="caseFile__rail">
+              <div class="caseRail__meta">
+                <p class="caseId mono">CASE-001</p>
+                <span class="badge badge--ok">CLOSED</span>
+                <span class="badge badge--info">Malware</span>
+              </div>
+            </div>
+            <div class="caseFile__body">
+              <div class="caseFile__top">
+                <div>
+                  <h3 class="case__title">3CX Supply Chain Attack</h3>
+                  <p class="case__focus"><span class="case__focusLabel">CTI</span><span class="case__focusLabel">DLL Side-Loading</span><span class="case__focusLabel">T1574</span></p>
+                </div>
+                <div class="caseFile__status">
+                  <span class="statusBadge statusBadge--closed">Resuelto</span>
+                </div>
+              </div>
+              <dl class="caseMeta">
+                <div class="caseMeta__item"><dt>Plataforma</dt><dd>CyberDefenders</dd></div>
+                <div class="caseMeta__item"><dt>Tipo</dt><dd>Supply Chain</dd></div>
+                <div class="caseMeta__item"><dt>MITRE</dt><dd>T1497 · T1574</dd></div>
+              </dl>
+              <p class="case__desc">Investigación basada en CTI de un instalador oficial comprometido de 3CX. Análisis de payloads maliciosos, técnicas de evasión y DLL Side-Loading.</p>
+              <div class="case__actions">
+                <a href="https://github.com/dsandili06/SOC-Practitioner-Labs" target="_blank" rel="noopener" class="btn btn--primary">Ver writeup →</a>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- Case 2 -->
+        <article class="case card reveal">
+          <div class="caseFile">
+            <div class="caseFile__rail">
+              <div class="caseRail__meta">
+                <p class="caseId mono">CASE-002</p>
+                <span class="badge badge--ok">CLOSED</span>
+                <span class="badge badge--info">Forensics</span>
+              </div>
+            </div>
+            <div class="caseFile__body">
+              <div class="caseFile__top">
+                <div>
+                  <h3 class="case__title">Insider Threat — Kali Image</h3>
+                  <p class="case__focus"><span class="case__focusLabel">DFIR</span><span class="case__focusLabel">Linux Forensics</span></p>
+                </div>
+                <div class="caseFile__status">
+                  <span class="statusBadge statusBadge--closed">Resuelto</span>
+                </div>
+              </div>
+              <dl class="caseMeta">
+                <div class="caseMeta__item"><dt>Plataforma</dt><dd>CyberDefenders</dd></div>
+                <div class="caseMeta__item"><dt>Tipo</dt><dd>Insider Threat</dd></div>
+                <div class="caseMeta__item"><dt>Artefactos</dt><dd>.bash_history</dd></div>
+              </dl>
+              <p class="case__desc">Forense en imagen de Kali Linux. Análisis de .bash_history, extracción de herramientas ofensivas y trazabilidad de eventos del atacante.</p>
+              <div class="case__actions">
+                <a href="https://github.com/dsandili06/SOC-Practitioner-Labs" target="_blank" rel="noopener" class="btn btn--primary">Ver writeup →</a>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- Case 3 -->
+        <article class="case card reveal">
+          <div class="caseFile">
+            <div class="caseFile__rail">
+              <div class="caseRail__meta">
+                <p class="caseId mono">CASE-003</p>
+                <span class="badge badge--ok">CLOSED</span>
+                <span class="badge badge--info">Persistence</span>
+              </div>
+            </div>
+            <div class="caseFile__body">
+              <div class="caseFile__top">
+                <div>
+                  <h3 class="case__title">LNK Dropper &amp; Greenshot Abuse</h3>
+                  <p class="case__focus"><span class="case__focusLabel">Persistence</span><span class="case__focusLabel">LOLBins</span></p>
+                </div>
+                <div class="caseFile__status">
+                  <span class="statusBadge statusBadge--closed">Resuelto</span>
+                </div>
+              </div>
+              <dl class="caseMeta">
+                <div class="caseMeta__item"><dt>Plataforma</dt><dd>CyberDefenders</dd></div>
+                <div class="caseMeta__item"><dt>Vector</dt><dd>LNK File</dd></div>
+                <div class="caseMeta__item"><dt>MITRE</dt><dd>T1547 · T1218</dd></div>
+              </dl>
+              <p class="case__desc">Análisis de un vector inicial LNK distribuido por mensajería. Reconstrucción de persistencia abusando de software legítimo (Greenshot) y exfiltración de red.</p>
+              <div class="case__actions">
+                <a href="https://github.com/dsandili06/SOC-Practitioner-Labs" target="_blank" rel="noopener" class="btn btn--primary">Ver writeup →</a>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- Case 4 -->
+        <article class="case card reveal">
+          <div class="caseFile">
+            <div class="caseFile__rail">
+              <div class="caseRail__meta">
+                <p class="caseId mono">CASE-004</p>
+                <span class="badge badge--ok">CLOSED</span>
+                <span class="badge badge--info">Ransomware</span>
+              </div>
+            </div>
+            <div class="caseFile__body">
+              <div class="caseFile__top">
+                <div>
+                  <h3 class="case__title">Ransomware Disk Forensics</h3>
+                  <p class="case__focus"><span class="case__focusLabel">Disk Forensics</span><span class="case__focusLabel">PowerShell</span></p>
+                </div>
+                <div class="caseFile__status">
+                  <span class="statusBadge statusBadge--closed">Resuelto</span>
+                </div>
+              </div>
+              <dl class="caseMeta">
+                <div class="caseMeta__item"><dt>Plataforma</dt><dd>CyberDefenders</dd></div>
+                <div class="caseMeta__item"><dt>Tipo</dt><dd>Ransomware</dd></div>
+                <div class="caseMeta__item"><dt>Tools</dt><dd>Autopsy · PS</dd></div>
+              </dl>
+              <p class="case__desc">Investigación de imagen de disco post-ransomware. Extracción de artefactos de navegador/correo, deofuscación de script PowerShell y descifrado de evidencia.</p>
+              <div class="case__actions">
+                <a href="https://github.com/dsandili06/SOC-Practitioner-Labs" target="_blank" rel="noopener" class="btn btn--primary">Ver writeup →</a>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- Case 5 -->
+        <article class="case card reveal">
+          <div class="caseFile">
+            <div class="caseFile__rail">
+              <div class="caseRail__meta">
+                <p class="caseId mono">CASE-005</p>
+                <span class="badge badge--ok">CLOSED</span>
+                <span class="badge badge--info">Browser Malware</span>
+              </div>
+            </div>
+            <div class="caseFile__body">
+              <div class="caseFile__top">
+                <div>
+                  <h3 class="case__title">Fake ChatGPT Extension</h3>
+                  <p class="case__focus"><span class="case__focusLabel">Malware Analysis</span><span class="case__focusLabel">Exfiltración</span></p>
+                </div>
+                <div class="caseFile__status">
+                  <span class="statusBadge statusBadge--closed">Resuelto</span>
+                </div>
+              </div>
+              <dl class="caseMeta">
+                <div class="caseMeta__item"><dt>Plataforma</dt><dd>CyberDefenders</dd></div>
+                <div class="caseMeta__item"><dt>Vector</dt><dd>Browser Extension</dd></div>
+                <div class="caseMeta__item"><dt>Técnica</dt><dd>Image Beacon</dd></div>
+              </dl>
+              <p class="case__desc">Análisis de extensión de navegador que simula ser ChatGPT para interceptar credenciales y sesiones web. Identificación de Image Beacons y exfiltración cifrada.</p>
+              <div class="case__actions">
+                <a href="https://github.com/dsandili06/SOC-Practitioner-Labs" target="_blank" rel="noopener" class="btn btn--primary">Ver writeup →</a>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- Case 6 — Future -->
+        <article class="case card case--future reveal">
+          <div class="caseFile">
+            <div class="caseFile__rail">
+              <div class="caseRail__meta">
+                <p class="caseId mono">CASE-006</p>
+                <span class="badge">EN PROGRESO</span>
+              </div>
+            </div>
+            <div class="caseFile__body">
+              <div class="caseFile__top">
+                <div>
+                  <h3 class="case__title">Próximo análisis...</h3>
+                  <p class="case__focus"><span class="case__focusLabel">TBD</span></p>
+                </div>
+                <div class="caseFile__status">
+                  <span class="statusBadge statusBadge--queued">Queued</span>
+                </div>
+              </div>
+              <p class="case__desc muted">Próximo análisis de incidente en desarrollo. Seleccionando laboratorio y vector de ataque a documentar.</p>
+            </div>
+          </div>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- PROJECTS -->
+  <section class="section" id="proyectos">
+    <div class="container">
+      <div class="section__header reveal">
+        <p class="section__kicker mono">03. arsenal</p>
+        <h2 class="section__title">Proyectos &amp; Herramientas</h2>
+        <p class="section__subtitle">Scripts y herramientas desarrolladas para operaciones Blue Team, automatización SOC y análisis forense.</p>
+      </div>
+      <div class="projects-grid">
+
+        <div class="project-card reveal">
+          <div class="project-header">
+            <div class="project-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 7.5l3 2.25-3 2.25m4.5 0h3m-9 8.25h13.5A2.25 2.25 0 0021 18V6a2.25 2.25 0 00-2.25-2.25H5.25A2.25 2.25 0 003 6v12a2.25 2.25 0 002.25 2.25z"/></svg>
+            </div>
+            <h3 class="project-title">BlueTeam Scripts Repository</h3>
+            <p style="color:var(--muted);font-size:14px;margin:8px 0 16px;">Colección de scripts operacionales para DFIR, SOC Analysts y Threat Hunting. Triage de endpoints, enumeración de hosts, parseo de logs e integración con Threat Intelligence.</p>
+            <div class="stackGrid" style="margin-bottom:16px;">
+              <span class="stackItem">Python</span>
+              <span class="stackItem">PowerShell</span>
+              <span class="stackItem">VirusTotal API</span>
+              <span class="stackItem">AbuseIPDB</span>
+            </div>
+          </div>
+          <a href="https://github.com/dsandili06/blueteam-scripts" target="_blank" rel="noopener" class="btn btn--primary" style="width:100%;justify-content:center;">Ver repositorio →</a>
+        </div>
+
+        <div class="project-card reveal" style="border-style:dashed;opacity:0.7;">
+          <div class="project-header">
+            <div class="project-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            </div>
+            <h3 class="project-title">Proyecto en progreso...</h3>
+            <p style="color:var(--muted);font-size:14px;margin:8px 0 16px;">Se está trabajando en un nuevo proyecto de laboratorio o herramienta SOC. Se actualizará esta sección en cuanto esté listo para su publicación.</p>
+          </div>
+          <span class="btn" style="width:100%;justify-content:center;opacity:0.5;cursor:default;">Próximamente</span>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- TRAINING -->
+  <section class="section reveal">
+    <div class="container">
+      <div class="section__header">
+        <p class="section__kicker mono">04. training</p>
+        <h2 class="section__title">Certificaciones &amp; Formación</h2>
+      </div>
+      <div class="training">
+        <div class="training__item card reveal">
+          <div>
+            <p class="training__title">SOC Level 1 Path</p>
+            <p class="training__meta">TryHackMe · Completado</p>
+          </div>
+          <span class="badge badge--ok">✓ Completado</span>
+        </div>
+        <div class="training__item card reveal">
+          <div>
+            <p class="training__title">SOC Practitioner</p>
+            <p class="training__meta">TryHackMe · En progreso</p>
+          </div>
+          <span class="badge badge--info">En progreso</span>
+        </div>
+        <div class="training__item card reveal">
+          <div>
+            <p class="training__title">CompTIA Security+</p>
+            <p class="training__meta">CompTIA · Planificado</p>
+          </div>
+          <span class="badge">Próximamente</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section class="section" id="contacto">
+    <div class="container">
+      <div class="card reveal">
+        <div class="contact">
+          <p class="section__kicker mono">// open to opportunities</p>
+          <h2 class="section__title" style="margin:12px 0;">Buscando mi primer rol en SOC</h2>
+          <p class="section__subtitle" style="max-width:52ch;margin:0 auto 28px;">Si buscás un analista SOC junior con sólida base técnica, hábito de documentación y pasión genuina por la ciberseguridad defensiva — estoy disponible para charlar.</p>
+          <div class="contact__buttons">
+            <a href="https://www.linkedin.com/in/santiago-sandili" target="_blank" rel="noopener" class="btn--contact">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+              LinkedIn
+            </a>
+            <a href="https://github.com/dsandili06" target="_blank" rel="noopener" class="btn--contact">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+              GitHub
+            </a>
           </div>
         </div>
-      </div>
-    </div>
-  </section>
-
-  <section id="about">
-    <div class="section-header reveal">
-      <span class="section-num">01.</span>
-      <h2 class="section-title">Sobre mi</h2>
-      <div class="section-line"></div>
-    </div>
-    <div class="about-text reveal">
-      <p>Oriundo del interior del pais, apasionado por la ciberseguridad y por aprender algo nuevo cada dia, con el objetivo de mejorar como profesional y como persona.</p>
-      <p>Desde mis inicios en la ciberseguridad siempre me intereso como se defienden las infraestructuras mas importantes: como se revisa el dump de una memoria para encontrar datos relevantes, como funciona la forensia digital, y como se atrapa a un ciberdelincuente antes de que cumpla su objetivo. Todo esto inclino la balanza hacia el Blue Team.</p>
-      <p>Por eso diseñe un roadmap de aprendizaje intensivo y detallado para adquirir los conocimientos necesarios. Hoy, ese camino me trajo hasta aqui: construyendo un portfolio web para mostrar mi avance, mis conocimientos y mis objetivos.</p>
-    </div>
-  </section>
-
-  <section id="skills">
-    <div class="section-header reveal">
-      <span class="section-num">02.</span>
-      <h2 class="section-title">Skills</h2>
-      <div class="section-line"></div>
-    </div>
-    <div class="skills-list">
-      <div class="skill-row reveal">
-        <div class="skill-row-name">Alert Triage</div>
-        <div class="skill-row-desc">Priorizacion y clasificacion de alertas de seguridad para determinar severidad y curso de accion apropiado.</div>
-      </div>
-      <div class="skill-row reveal">
-        <div class="skill-row-name">Incident Documentation</div>
-        <div class="skill-row-desc">Documentacion estructurada y detallada de incidentes, timelines y hallazgos para reportes ejecutivos y tecnicos.</div>
-      </div>
-      <div class="skill-row reveal">
-        <div class="skill-row-name">Log Analysis</div>
-        <div class="skill-row-desc">Analisis de logs en multiples formatos y fuentes para identificar anomalias, IOCs y patrones de ataque.</div>
-      </div>
-      <div class="skill-row reveal">
-        <div class="skill-row-name">Threat Detection</div>
-        <div class="skill-row-desc">Identificacion de IOCs, mapeo de TTPs contra MITRE ATT&CK y desarrollo de reglas de deteccion.</div>
-      </div>
-      <div class="skill-row reveal">
-        <div class="skill-row-name">Malware Analysis</div>
-        <div class="skill-row-desc">Analisis estatico y dinamico de muestras maliciosas para extraccion de IOCs y comprension de comportamiento.</div>
-      </div>
-      <div class="skill-row reveal">
-        <div class="skill-row-name">Forensics</div>
-        <div class="skill-row-desc">Analisis forense digital, recuperacion de evidencia, memory forensics y timeline analysis.</div>
-      </div>
-      <div class="skill-row reveal">
-        <div class="skill-row-name">Scripting</div>
-        <div class="skill-row-desc">Automatizacion de tareas repetitivas, parseo de datos y desarrollo de scripts con Python, Bash y PowerShell.</div>
-      </div>
-    </div>
-  </section>
-
-  <section id="tools">
-    <div class="section-header reveal">
-      <span class="section-num">03.</span>
-      <h2 class="section-title">Herramientas</h2>
-      <div class="section-line"></div>
-    </div>
-    <div class="tools-cloud reveal">
-      <span class="tool-tag">Zimmerman Tools</span>
-      <span class="tool-tag">Autopsy</span>
-      <span class="tool-tag">FTK Imager</span>
-      <span class="tool-tag">Volatility 3</span>
-      <span class="tool-tag">Timeline Explorer</span>
-      <span class="tool-tag">DB Browser for SQLite</span>
-      <span class="tool-tag">dnSpy</span>
-      <span class="tool-tag">ExtAnalysis</span>
-      <span class="tool-tag">CRX Viewer</span>
-      <span class="tool-tag">Hybrid Analysis</span>
-      <span class="tool-tag">Any.Run</span>
-      <span class="tool-tag">MalwareBazaar</span>
-      <span class="tool-tag">TShark</span>
-      <span class="tool-tag">Wireshark</span>
-      <span class="tool-tag">Suricata</span>
-      <span class="tool-tag">Snort</span>
-      <span class="tool-tag">Splunk SPL</span>
-      <span class="tool-tag">ELK Stack</span>
-      <span class="tool-tag">Kibana</span>
-      <span class="tool-tag">VirusTotal</span>
-      <span class="tool-tag">Shodan</span>
-      <span class="tool-tag">AbuseIPDB</span>
-      <span class="tool-tag">ThreatFox</span>
-      <span class="tool-tag">Python</span>
-      <span class="tool-tag">Bash</span>
-      <span class="tool-tag">PowerShell</span>
-      <span class="tool-tag">CyberChef</span>
-    </div>
-  </section>
-
-  <section id="labs">
-    <div class="section-header reveal">
-      <span class="section-num">04.</span>
-      <h2 class="section-title">Labs & Writeups</h2>
-      <div class="section-line"></div>
-    </div>
-    <div class="labs-list">
-      <a href="https://github.com/santis6/SOC-Practitioner-Labs/blob/main/Writeups/CyberDefenders/FakeGPT.md" class="lab-card reveal" target="_blank" rel="noopener">
-        <div class="lab-cat">Malware Analysis</div>
-        <div class="lab-title">FakeGPT</div>
-        <div class="lab-desc">Analisis de malware en extension de navegador que simula ser ChatGPT para interceptar credenciales y sesiones web. Identificacion de Image Beacons y exfiltracion cifrada.</div>
-        <div class="lab-arrow">Ver writeup →</div>
-      </a>
-      <a href="https://github.com/santis6/SOC-Practitioner-Labs/blob/main/Writeups/CyberDefenders/3CX-Supply%20Chain.md" class="lab-card reveal" target="_blank" rel="noopener">
-        <div class="lab-cat">Threat Intel</div>
-        <div class="lab-title">3CX Supply Chain</div>
-        <div class="lab-desc">Investigacion basada en CTI de un instalador oficial comprometido de 3CX. Analisis de payloads maliciosos, tecnicas de evasion (T1497) y DLL Side-Loading (T1574).</div>
-        <div class="lab-arrow">Ver writeup →</div>
-      </a>
-      <a href="https://github.com/santis6/SOC-Practitioner-Labs/blob/main/Writeups/CyberDefenders/Insider.md" class="lab-card reveal" target="_blank" rel="noopener">
-        <div class="lab-cat">Endpoint Forensics</div>
-        <div class="lab-title">Insider</div>
-        <div class="lab-desc">Forense en imagen de Kali Linux para investigar actividad de una amenaza interna. Analisis de .bash_history, extraccion de herramientas ofensivas y trazabilidad de eventos.</div>
-        <div class="lab-arrow">Ver writeup →</div>
-      </a>
-      <a href="https://github.com/santis6/SOC-Practitioner-Labs/blob/main/Writeups/CyberDefenders/KrakenKeylogger.md" class="lab-card reveal" target="_blank" rel="noopener">
-        <div class="lab-cat">Malware Analysis</div>
-        <div class="lab-title">KrakenKeylogger</div>
-        <div class="lab-desc">Analisis de un vector inicial LNK distribuido por mensajeria web. Reconstruccion de persistencia abusando de software legitimo (Greenshot) y exfiltracion de red.</div>
-        <div class="lab-arrow">Ver writeup →</div>
-      </a>
-      <a href="https://github.com/santis6/SOC-Practitioner-Labs/blob/main/Writeups/CyberDefenders/Silent%20Breach.md" class="lab-card reveal" target="_blank" rel="noopener">
-        <div class="lab-cat">Endpoint Forensics</div>
-        <div class="lab-title">Silent Breach</div>
-        <div class="lab-desc">Investigacion de una imagen de disco tras ataque de ransomware. Extraccion de artefactos de navegador/correo, deofuscacion de script PowerShell y descifrado de evidencia.</div>
-        <div class="lab-arrow">Ver writeup →</div>
-      </a>
-      <div class="lab-card reveal placeholder">
-        <div class="lab-cat">En desarrollo</div>
-        <div class="lab-title">Investigacion en proceso</div>
-        <div class="lab-desc">Mas laboratorios en analisis. Proximamente nuevos writeups de Blue Team, forensics y malware analysis.</div>
-        <div class="lab-arrow">Pronto →</div>
-      </div>
-    </div>
-
-    <div class="labs-more reveal">
-      <a href="https://github.com/santis6/SOC-Practitioner-Labs/tree/main/Writeups" class="btn-outline" target="_blank" rel="noopener">+ Writeups</a>
-    </div>
-  </section>
-
-  <section id="certs">
-    <div class="section-header reveal">
-      <span class="section-num">05.</span>
-      <h2 class="section-title">Certificaciones & Cursos</h2>
-      <div class="section-line"></div>
-    </div>
-    <div class="certs-grid">
-      <div class="cert-card reveal featured">
-        <div class="cert-ribbon">Certified</div>
-        <div class="cert-org">TryHackMe</div>
-        <div class="cert-name">THM SAL1</div>
-        <a href="https://assets.tryhackme.com/certification-certificate/69bb156d56eed3cbe3a712a6.pdf" class="cert-link" target="_blank" rel="noopener">Ver certificado →</a>
-      </div>
-      <div class="cert-card reveal pending">
-        <div class="cert-org">CompTIA</div>
-        <div class="cert-name">Security+</div>
-        <span class="cert-status pending">En progreso</span>
-      </div>
-    </div>
-
-    <div class="courses-list">
-      <div class="course-item reveal">
-        <div>
-          <div class="course-name">SOC L1 BOOTCAMP</div>
-          <div class="course-org">ComunidadDOJO</div>
-        </div>
-        <div class="course-status">✓</div>
-      </div>
-      <div class="course-item reveal">
-        <div>
-          <div class="course-name">SOC L1 Path</div>
-          <div class="course-org">TryHackMe</div>
-        </div>
-        <div class="course-status">✓</div>
-      </div>
-      <div class="course-item reveal">
-        <div>
-          <div class="course-name">Cyber Security 101</div>
-          <div class="course-org">TryHackMe</div>
-        </div>
-        <div class="course-status">✓</div>
-      </div>
-      <div class="course-item reveal">
-        <div>
-          <div class="course-name">Pre Security</div>
-          <div class="course-org">TryHackMe</div>
-        </div>
-        <div class="course-status">✓</div>
-      </div>
-      <div class="course-item reveal">
-        <div>
-          <div class="course-name">Introduction to Cybersecurity</div>
-          <div class="course-org">Cisco</div>
-        </div>
-        <div class="course-status">✓</div>
-      </div>
-      <div class="course-item reveal">
-        <div>
-          <div class="course-name">Networking Basics</div>
-          <div class="course-org">Cisco</div>
-        </div>
-        <div class="course-status">✓</div>
-      </div>
-      <div class="course-item reveal">
-        <div>
-          <div class="course-name">Network Security Fundamentals</div>
-          <div class="course-org">Palo Alto Networks</div>
-        </div>
-        <div class="course-status">✓</div>
-      </div>
-    </div>
-  </section>
-
-  <section id="contact">
-    <div class="section-header reveal">
-      <span class="section-num">06.</span>
-      <h2 class="section-title">Contacto</h2>
-      <div class="section-line"></div>
-    </div>
-    <div class="contact-grid">
-      <div>
-        <div class="contact-links">
-          <a href="https://linkedin.com/in/santiagodsandili" class="contact-link" target="_blank" rel="noopener">
-            <div class="cl-left">
-              <span class="cl-platform">LinkedIn</span>
-              <span class="cl-handle">in/santiagodsandili</span>
-            </div>
-            <span class="cl-arrow">↗</span>
-          </a>
-          <a href="https://github.com/santis6" class="contact-link" target="_blank" rel="noopener">
-            <div class="cl-left">
-              <span class="cl-platform">GitHub</span>
-              <span class="cl-handle">github.com/santis6</span>
-            </div>
-            <span class="cl-arrow">↗</span>
-          </a>
-          <a href="mailto:sdsandili06@gmail.com" class="contact-link">
-            <div class="cl-left">
-              <span class="cl-platform">Email</span>
-              <span class="cl-handle">sdsandili06@gmail.com</span>
-            </div>
-            <span class="cl-arrow">↗</span>
-          </a>
-        </div>
-      </div>
-      <div class="contact-cta">
-        <div class="cta-label">// Abierto a oportunidades</div>
-        <div class="cta-title">Buscando mi primer rol en SOC</div>
-        <div class="cta-body">
-          Si buscas un analista SOC junior con solida base tecnica, habito de documentacion y pasion genuina por la ciberseguridad defensiva — estoy disponible para charlar.
-        </div>
-        <a href="mailto:sdsandili06@gmail.com" class="btn-primary">Enviar mensaje →</a>
       </div>
     </div>
   </section>
 
 </main>
 
-<div class="scroll-progress" id="scrollProgress"></div>
+<footer class="footer">
+  <div class="container">
+    <div class="footer__inner">
+      <div class="footer__left">
+        <p class="footer__tag mono">dsandili06 · Blue Team</p>
+        <p class="footer__muted" style="font-size:12px;">Tucumán, Argentina · 2026</p>
+      </div>
+      <div class="footer__right">
+        <a href="https://github.com/dsandili06" target="_blank" rel="noopener" aria-label="GitHub">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+        </a>
+      </div>
+    </div>
+  </div>
+</footer>
 
-<script>
-  // MOBILE MENU
-  const menuToggle = document.getElementById('menuToggle');
-  const mobileNav = document.getElementById('mobileNav');
-  menuToggle.addEventListener('click', () => {
-    mobileNav.style.display = mobileNav.style.display === 'block' ? 'none' : 'block';
-  });
-  mobileNav.querySelectorAll('a').forEach(a => {
-    a.addEventListener('click', () => { mobileNav.style.display = 'none'; });
-  });
-
-  // STAGGERED SCROLL REVEAL
-  const revealElements = document.querySelectorAll('.skill-row, .tools-cloud, .lab-card, .cert-card, .course-item, .section-header, .about-text');
-  revealElements.forEach(el => el.classList.add('reveal'));
-
-  function checkReveal() {
-    revealElements.forEach((el, index) => {
-      const elementTop = el.getBoundingClientRect().top;
-      if (elementTop < window.innerHeight - 80) {
-        setTimeout(() => {
-          el.classList.add('active');
-        }, (index % 4) * 100);
-      }
-    });
-  }
-
-  // SCROLL PROGRESS
-  function updateProgressBar() {
-    const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
-    const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-    const scrolled = (winScroll / height) * 100;
-    document.getElementById("scrollProgress").style.width = scrolled + "%";
-  }
-
-  window.addEventListener('scroll', () => {
-    checkReveal();
-    updateProgressBar();
-  });
-
-  checkReveal();
-  updateProgressBar();
-
-  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-    anchor.addEventListener('click', function (e) {
-      e.preventDefault();
-      const target = document.querySelector(this.getAttribute('href'));
-      if (target) target.scrollIntoView({ behavior: 'smooth' });
-    });
-  });
-</script>
-
+<script src="main.js"></script>
 </body>
 </html>
